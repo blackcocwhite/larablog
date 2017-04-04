@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Tag;
 use App\Http\Requests\TagCreateRequest;
+use App\Http\Requests\TagUpdateRequest;
 
 class TagController extends Controller
 {
@@ -91,6 +92,7 @@ class TagController extends Controller
         }
 
         return view('admin.tag.edit', $data);
+        // return $data;
     }
 
     /**
@@ -100,9 +102,17 @@ class TagController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TagUpdateRequest $request, $id)
     {
-        //
+        $tag = Tag::findOrFail($id);
+
+        foreach (array_keys(array_except($this->fields, ['tag'])) as $field) {
+            $tag->$field = $request->get($field);
+        }
+        $tag->save();
+
+        return redirect("/admin/tag/$id/edit")
+                    ->withSuccess("Changes saved.");
     }
 
     /**
@@ -113,6 +123,10 @@ class TagController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $tag = Tag::findOrFail($id);
+        $tag->delete();
+
+        return redirect('/admin/tag')
+                        ->withSuccess("The '$tag->tag' tag has been deleted.");
     }
 }

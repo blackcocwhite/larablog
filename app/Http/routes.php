@@ -44,3 +44,4 @@ Route::get('/register', function () {
 //Route::get('profile', ['middleware' => 'wechat.user', function() {
 //    echo 123;
 //}]);
+//
